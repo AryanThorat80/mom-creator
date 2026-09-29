@@ -1,0 +1,6 @@
+{
+  "name": "MOM Creator",
+  "description": "AI-powered Minutes of Meeting (MOM) platform: transcribe recordings, generate structured summaries and action items, sync with Google Meet and Calendar, and export to DOCX, Excel, and printable documents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
