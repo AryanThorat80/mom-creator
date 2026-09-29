@@ -31,7 +31,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         settings.frontend_url,
+        "http://localhost:5173",
     ],
+    allow_origin_regex=r"https://mom-creator-[a-z0-9]+-thorataryan0-6927\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
