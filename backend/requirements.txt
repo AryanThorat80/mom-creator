@@ -8,8 +8,6 @@ httpx
 python-multipart
 ffmpeg-python
 openai
-groq
-gotrue
 cryptography
 PyJWT
 google-api-python-client
