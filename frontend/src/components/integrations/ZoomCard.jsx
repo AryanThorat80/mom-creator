@@ -28,27 +28,34 @@ export function ZoomCard({ meetingId }) {
 
   useEffect(() => { if (meetingId) fetchZoom(); }, [meetingId]);
 
-  const handleCreate = async () => {
-    setCreating(true);
-    try {
-      const result = await createZoomMeeting(meetingId);
-      setData(result);
-      showToast('Zoom meeting created successfully', 'success');
-    } catch (err) {
-      if (err.status === 400 && err.message?.toLowerCase().includes('not connected')) {
-        try {
-          const auth = await connectZoom();
-          if (auth?.authorization_url) {
-            window.location.href = auth.authorization_url;
-            return;
-          }
-        } catch (connectErr) {
-          showToast(connectErr.message || 'Failed to start Zoom connection', 'error');
-        }
-      } else {
-        showToast(err.message || 'Failed to create Zoom meeting', 'error');
-      }
-    } finally { setCreating(false); }
+  // const handleCreate = async () => {
+  //   setCreating(true);
+  //   try {
+  //     const result = await createZoomMeeting(meetingId);
+  //     setData(result);
+  //     showToast('Zoom meeting created successfully', 'success');
+  //   } catch (err) {
+  //     if (err.status === 400 && err.message?.toLowerCase().includes('not connected')) {
+  //       try {
+  //         const auth = await connectZoom();
+  //         if (auth?.authorization_url) {
+  //           window.location.href = auth.authorization_url;
+  //           return;
+  //         }
+  //       } catch (connectErr) {
+  //         showToast(connectErr.message || 'Failed to start Zoom connection', 'error');
+  //       }
+  //     } else {
+  //       showToast(err.message || 'Failed to create Zoom meeting', 'error');
+  //     }
+  //   } finally { setCreating(false); }
+  // };
+
+  const handleCreate = () => {
+    showToast(
+      'Zoom meeting creation is currently under construction. This feature will be available soon.',
+      'info'
+    );
   };
 
   const handleSyncTranscript = async () => {
