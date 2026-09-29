@@ -8,3 +8,4 @@ python-multipart
 cryptography
 python-docx
 google-genai==2.25.0
+email-validator
