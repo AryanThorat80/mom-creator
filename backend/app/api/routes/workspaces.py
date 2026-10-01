@@ -1,3 +1,4 @@
+from app.core.config import settings
 from fastapi import APIRouter, Depends, HTTPException
 from uuid import uuid4
 from datetime import datetime, timezone, timedelta
@@ -455,7 +456,7 @@ async def create_workspace_invitation(
     # --------------------------------------------------------
 
     invitation_url = (
-        f"http://localhost:5173/invitations/{raw_token}"
+        f"{settings.frontend_url.rstrip('/')}/invitations/{raw_token}"
     )
 
     # --------------------------------------------------------
