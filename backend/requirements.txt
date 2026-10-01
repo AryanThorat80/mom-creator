@@ -9,3 +9,6 @@ cryptography
 python-docx
 google-genai==2.25.0
 email-validator
+reportlab>=4.2.0
+pypdf>=5.0.0
+PyMuPDF>=1.24.0

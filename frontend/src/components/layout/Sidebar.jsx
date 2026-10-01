@@ -43,10 +43,10 @@ export function Sidebar({
     <aside className="w-64 h-full flex flex-col bg-white border-r border-slate-200 select-none">
       {/* Brand Zone */}
       <div className="h-14 px-5 flex items-center gap-2.5 border-b border-slate-100">
-        <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-xs">
+        <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-xs">
           M
         </div>
-        <span className="text-base font-bold text-slate-900 tracking-tight">
+        <span className="brand-font text-base font-bold text-slate-900 tracking-tight">
           MOM Creator
         </span>
       </div>
@@ -78,7 +78,7 @@ export function Sidebar({
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-brand-gradient' : 'text-slate-400'}`} />
               <span>{item.label}</span>
             </button>
           );

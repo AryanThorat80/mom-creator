@@ -138,7 +138,7 @@ export function HealthCheckPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
             <div className="flex items-center gap-2 text-slate-700 font-semibold">
-              <Server className="w-4 h-4 text-indigo-600" />
+              <Server className="w-4 h-4 text-brand-gradient" />
               <span>FastAPI Backend URL</span>
             </div>
             <p className="font-mono text-[11px] text-slate-800 break-all">{apiUrl}</p>
@@ -147,7 +147,7 @@ export function HealthCheckPage() {
 
           <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
             <div className="flex items-center gap-2 text-slate-700 font-semibold">
-              <Database className="w-4 h-4 text-indigo-600" />
+              <Database className="w-4 h-4 text-brand-gradient" />
               <span>Supabase Project</span>
             </div>
             <p className="font-mono text-[11px] text-slate-800 break-all">

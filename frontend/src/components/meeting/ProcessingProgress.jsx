@@ -80,8 +80,8 @@ export function ProcessingProgress({
                   <CheckCircle2 className="w-3.5 h-3.5" />
                 </div>
               ) : state === 'active' ? (
-                <div className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping" />
+                <div className="w-5 h-5 rounded-full bg-indigo-100 text-brand-gradient flex items-center justify-center shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-brand-gradient animate-ping" />
                 </div>
               ) : (
                 <div className="w-5 h-5 rounded-full border border-slate-300 bg-white flex items-center justify-center shrink-0">

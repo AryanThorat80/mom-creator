@@ -64,7 +64,7 @@ export function UploadRecording({ onUploadFile, disabled = false, loading = fals
             disabled={disabled || loading}
             className="hidden"
           />
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-brand-gradient flex items-center justify-center mb-3">
             <UploadCloud className="w-6 h-6" />
           </div>
           <p className="text-sm font-semibold text-slate-900">

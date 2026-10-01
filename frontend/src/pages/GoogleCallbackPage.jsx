@@ -57,7 +57,7 @@ export function GoogleCallbackPage({ onNavigate }) {
           <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-left space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-slate-700 font-medium">
-                <Video className="w-4 h-4 text-indigo-600" />
+                <Video className="w-4 h-4 text-brand-gradient" />
                 <span>Google Meet</span>
               </div>
               <span className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
@@ -68,7 +68,7 @@ export function GoogleCallbackPage({ onNavigate }) {
 
             <div className="flex items-center justify-between pt-2 border-t border-slate-200/60">
               <div className="flex items-center gap-2 text-slate-700 font-medium">
-                <Calendar className="w-4 h-4 text-indigo-600" />
+                <Calendar className="w-4 h-4 text-brand-gradient" />
                 <span>Google Calendar</span>
               </div>
               {checking ? (

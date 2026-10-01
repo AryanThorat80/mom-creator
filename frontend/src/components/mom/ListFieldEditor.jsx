@@ -31,7 +31,7 @@ export function ListFieldEditor({
       <ul className="space-y-2 text-sm text-slate-700">
         {items.map((item, idx) => (
           <li key={idx} className="flex items-start gap-2.5 leading-relaxed">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-gradient mt-2 shrink-0" />
             <span>{item}</span>
           </li>
         ))}
@@ -49,7 +49,7 @@ export function ListFieldEditor({
             value={item}
             onChange={(e) => handleItemChange(idx, e.target.value)}
             placeholder={placeholder}
-            className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-colors resize-y"
+            className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient transition-colors resize-y"
           />
           <button
             type="button"
@@ -67,7 +67,7 @@ export function ListFieldEditor({
         size="sm"
         onClick={handleAddItem}
         icon={Plus}
-        className="text-xs text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50/50"
+        className="text-xs text-brand-gradient hover:text-indigo-700 hover:bg-indigo-50/50"
       >
         {addLabel}
       </Button>

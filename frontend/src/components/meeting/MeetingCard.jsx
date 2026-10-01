@@ -30,7 +30,7 @@ export function MeetingCard({ meeting, onOpen, onDelete }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-brand-gradient transition-colors line-clamp-1">
             {meeting.title}
           </h3>
           {meeting.description && (
@@ -61,7 +61,7 @@ export function MeetingCard({ meeting, onOpen, onDelete }) {
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
-          <span className="text-indigo-600 font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform text-xs">
+          <span className="text-brand-gradient font-medium flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform text-xs">
             Open <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>

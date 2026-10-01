@@ -15,7 +15,7 @@ export function PublicHomePage() {
           <button
             type="button"
             onClick={() => navigateTo('/')}
-            className="text-xl font-bold tracking-tight"
+            className="text-xl brand-font tracking-tight"
           >
             MOM Creator
           </button>

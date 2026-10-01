@@ -3,7 +3,7 @@ import { Modal } from '../common/Modal.jsx';
 import { Input } from '../common/Input.jsx';
 import { Textarea } from '../common/Textarea.jsx';
 import { Button } from '../common/Button.jsx';
-import { Video, Mic, UploadCloud, FileSpreadsheet, ZoomIn } from 'lucide-react';
+import { Video, Mic, UploadCloud, FileSpreadsheet} from 'lucide-react';
 import { useWorkspace } from '../../context/WorkspaceContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import { createMeeting } from '../../services/meetings.js';
@@ -16,7 +16,6 @@ export function CreateMeetingModal({ isOpen, onClose, onMeetingCreated }) {
   const { showToast } = useToast();
 
   const [mode, setMode] = useState('upload');
-  const [onlineProvider, setOnlineProvider] = useState('google_meet');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [meetingDate, setMeetingDate] = useState(() => {
@@ -49,7 +48,7 @@ export function CreateMeetingModal({ isOpen, onClose, onMeetingCreated }) {
     {
       id: 'online',
       title: 'Online Meeting',
-      desc: 'Create a meeting on Google Meet or Zoom.',
+      desc: 'Create a meeting on Google Meet.',
       icon: Video,
     },
     {
@@ -145,7 +144,7 @@ export function CreateMeetingModal({ isOpen, onClose, onMeetingCreated }) {
         workspace_id: currentWorkspace.id,
         title: title.trim(),
         description: description.trim(),
-        mode: mode === 'online' ? onlineProvider : mode,
+        mode: mode === 'online' ? 'google_meet' : mode,
         meeting_date: isoDate,
       });
 
@@ -188,14 +187,14 @@ export function CreateMeetingModal({ isOpen, onClose, onMeetingCreated }) {
                   onClick={() => setMode(opt.id)}
                   className={`flex items-start gap-3 p-3 rounded-lg border text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-600'
+                      ? 'border-brand-gradient bg-indigo-50/60 ring-1 ring-brand-gradient'
                       : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <div
                     className={`p-2 rounded-lg shrink-0 ${
                       isSelected
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-brand-gradient text-white'
                         : 'bg-slate-100 text-slate-500'
                     }`}
                   >
@@ -214,28 +213,6 @@ export function CreateMeetingModal({ isOpen, onClose, onMeetingCreated }) {
             })}
           </div>
         </div>
-
-        {mode === 'online' && (
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3.5 space-y-2.5">
-            <label className="block text-xs font-semibold text-slate-700">Online meeting provider</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => setOnlineProvider('google_meet')} className={`p-3 rounded-lg border text-left ${onlineProvider === 'google_meet' ? 'border-indigo-600 bg-white ring-1 ring-indigo-600' : 'border-slate-200 bg-white'}`}>
-                <div className="flex items-center gap-2">
-                  <Video className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-semibold">Google Meet</span>
-                </div>
-                <p className="text-[10px] text-slate-500 mt-1">Automatic transcript sync</p>
-              </button>
-              <button type="button" onClick={() => setOnlineProvider('zoom')} className={`p-3 rounded-lg border text-left ${onlineProvider === 'zoom' ? 'border-indigo-600 bg-white ring-1 ring-indigo-600' : 'border-slate-200 bg-white'}`}>
-                <div className="flex items-center gap-2">
-                  <ZoomIn className="w-4 h-4 text-indigo-600" />
-                  <span className="text-xs font-semibold">Zoom</span>
-                </div>
-                <p className="text-[10px] text-slate-500 mt-1">Create a Zoom meeting</p>
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Meeting Details */}
         <div className="space-y-3.5 pt-2">

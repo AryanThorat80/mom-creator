@@ -6,10 +6,10 @@ from pydantic import BaseModel, Field
 
 class MeetingMode(str, Enum):
     GOOGLE_MEET = "google_meet"
-    ZOOM = "zoom"
     MIC_RECORDING = "mic_recording"
     UPLOAD = "upload"
     IMPORT = "import"
+    FIREFLIES = "fireflies"
 
 class MeetingStatus(str, Enum):
     DRAFT = "draft"

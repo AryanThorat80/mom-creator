@@ -1,4 +1,4 @@
-import {
+import { Flame,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -10,7 +10,6 @@ import {
   UploadCloud,
   FileSpreadsheet,
   AlertTriangle,
-  Flame,
   Minus,
 } from 'lucide-react';
 
@@ -159,13 +158,6 @@ export function MeetingModeBadge({ mode }) {
           <span>Online Meeting · Google Meet</span>
         </span>
       );
-    case 'zoom':
-      return (
-        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
-          <Video className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-          <span>Online Meeting · Zoom</span>
-        </span>
-      );
     case 'mic_recording':
       return (
         <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
@@ -185,6 +177,13 @@ export function MeetingModeBadge({ mode }) {
         <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
           <FileSpreadsheet className="w-3.5 h-3.5 text-amber-600 shrink-0" />
           <span>Import</span>
+        </span>
+      );
+    case 'fireflies':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+          <span>Fireflies</span>
         </span>
       );
     default:

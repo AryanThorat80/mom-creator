@@ -223,7 +223,7 @@ export function ActionItemsTable({
                       <td className="py-3 px-4">
                         {hasCalendarEvent ? (
                           <div className="flex items-center gap-1.5 text-xs text-indigo-700 font-medium">
-                            <CalendarCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                            <CalendarCheck className="w-3.5 h-3.5 text-brand-gradient shrink-0" />
                             <span>Scheduled</span>
                             <button
                               type="button"
@@ -242,7 +242,7 @@ export function ActionItemsTable({
                               setCalendarTargetItem(item);
                               setCalendarModalOpen(true);
                             }}
-                            className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-indigo-600 transition-colors font-medium cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-brand-gradient transition-colors font-medium cursor-pointer"
                           >
                             <CalendarPlus className="w-3.5 h-3.5 text-slate-400" />
                             <span>Add to Calendar</span>
@@ -329,7 +329,7 @@ export function ActionItemsTable({
 
                   <div className="flex items-center justify-between pt-2 border-t border-slate-50 text-xs">
                     {hasCalendarEvent ? (
-                      <span className="text-indigo-600 text-[11px] font-medium flex items-center gap-1">
+                      <span className="text-brand-gradient text-[11px] font-medium flex items-center gap-1">
                         <CalendarCheck className="w-3.5 h-3.5" />
                         Scheduled in Calendar
                       </span>
@@ -340,7 +340,7 @@ export function ActionItemsTable({
                           setCalendarTargetItem(item);
                           setCalendarModalOpen(true);
                         }}
-                        className="text-slate-500 hover:text-indigo-600 text-[11px] font-medium flex items-center gap-1"
+                        className="text-slate-500 hover:text-brand-gradient text-[11px] font-medium flex items-center gap-1"
                       >
                         <CalendarPlus className="w-3.5 h-3.5" />
                         Add to Calendar

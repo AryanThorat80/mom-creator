@@ -73,7 +73,7 @@ export function WorkspaceInvitationPage({ token, onNavigate }) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-brand-gradient animate-spin mx-auto" />
 
           <p className="mt-4 text-sm font-semibold text-slate-800">
             Checking invitation...
@@ -92,7 +92,7 @@ export function WorkspaceInvitationPage({ token, onNavigate }) {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-indigo-50 text-brand-gradient flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
 
@@ -133,7 +133,7 @@ export function WorkspaceInvitationPage({ token, onNavigate }) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-brand-gradient animate-spin mx-auto" />
 
           <p className="mt-4 text-sm font-semibold text-slate-800">
             Joining workspace...

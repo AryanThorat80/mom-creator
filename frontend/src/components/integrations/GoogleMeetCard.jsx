@@ -95,7 +95,7 @@ export function GoogleMeetCard({
     <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-indigo-50 text-brand-gradient flex items-center justify-center shrink-0">
             <Video className="w-4 h-4" />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function GoogleMeetCard({
                 href={meetData.meeting_uri}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 mt-0.5 break-all"
+                className="text-xs font-medium text-brand-gradient hover:text-indigo-800 flex items-center gap-1 mt-0.5 break-all"
               >
                 <span>{meetData.meeting_uri || meetData.meeting_code}</span>
                 <ExternalLink className="w-3 h-3 shrink-0" />
@@ -154,7 +154,7 @@ export function GoogleMeetCard({
                 href={meetData.meeting_uri}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center font-medium transition-colors cursor-pointer select-none whitespace-nowrap bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs px-3.5 py-2 text-sm gap-2 rounded-lg min-h-10"
+                className="inline-flex items-center justify-center font-medium transition-colors cursor-pointer select-none whitespace-nowrap bg-brand-gradient hover:bg-indigo-700 text-white shadow-xs px-3.5 py-2 text-sm gap-2 rounded-lg min-h-10"
               >
                 Open Google Meet
               </a>

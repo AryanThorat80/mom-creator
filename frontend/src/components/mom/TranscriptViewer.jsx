@@ -95,7 +95,7 @@ export function TranscriptViewer({ transcript = '' }) {
             <button
               type="button"
               onClick={() => setIsExpanded(true)}
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer"
+              className="text-xs font-semibold text-brand-gradient hover:text-indigo-700 cursor-pointer"
             >
               + Show {lines.length - 10} more lines
             </button>

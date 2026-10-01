@@ -1,30 +1,191 @@
 @import "tailwindcss";
 
+/* =========================================================
+   DESIGN SYSTEM
+   ========================================================= */
+
 @theme {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* Body / UI font */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+
+  /* Display font for major headings */
+  --font-heading: 'Kaushan Script', cursive;
+
+  /* Brand / logo font */
+  --font-brand: 'Saved by Zero', sans-serif;
+
+  /* Code / technical text */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, monospace;
+
+  /* Brand colors */
+  --color-brand-blue: #023b77;
+  --color-brand-teal: #039583;
 }
 
-/* Custom animation keyframes and utilities */
+
+/* =========================================================
+   SAVED BY ZERO
+   Used rarely, primarily for the MOM Creator brand/logo
+   ========================================================= */
+
+@font-face {
+  font-family: 'Saved by Zero';
+  src: url('/fonts/Saved by Zero Rg.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* =========================================================
+   GLOBAL TYPOGRAPHY
+   ========================================================= */
+
+html {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+}
+
+
+/* =========================================================
+   HEADINGS
+   ========================================================= */
+
+/*
+ * Kaushan Script is intentionally limited to major page headings.
+ *
+ * h1 = decorative / primary heading
+ * h2-h6 = normal UI typography
+ *
+ * This prevents the application from becoming overly stylized.
+ */
+
+h1 {
+  font-family: 'Kaushan Script', cursive;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+}
+
+
+/* =========================================================
+   BRAND FONT
+   ========================================================= */
+
+/*
+ * Use this ONLY for the MOM Creator brand/logo
+ * and other very rare branding moments.
+ */
+
+.brand-font {
+  font-family: 'Saved by Zero', sans-serif;
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   BRAND GRADIENT
+   ========================================================= */
+
+.brand-gradient {
+  background: linear-gradient(
+    135deg,
+    #023b77 0%,
+    #039583 100%
+  );
+}
+
+.brand-gradient-text {
+  background: linear-gradient(
+    135deg,
+    #023b77 0%,
+    #039583 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
+::selection {
+  background: #023b77;
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   CUSTOM ANIMATION KEYFRAMES
+   ========================================================= */
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { opacity: 0; transform: translateY(0.5rem); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInFromLeft {
-  from { opacity: 0; transform: translateX(-100%); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
+
+/* =========================================================
+   ANIMATION UTILITIES
+   ========================================================= */
 
 .animate-in {
   animation-duration: 150ms;
@@ -48,8 +209,15 @@
   animation-name: slideInFromLeft;
 }
 
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -57,7 +225,11 @@
   }
 }
 
-/* Custom printing styles */
+
+/* =========================================================
+   PRINTING
+   ========================================================= */
+
 @media print {
   body {
     background: #ffffff !important;

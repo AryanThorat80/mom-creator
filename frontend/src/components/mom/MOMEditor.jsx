@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react';
 import {
-  FileText,
   Edit2,
   CheckCircle,
   Lock,
   Download,
-  Printer,
-  FileSpreadsheet,
   Save,
   X,
-  Sparkles,
   ChevronDown,
-  Layers,
 } from 'lucide-react';
+
 import { Button } from '../common/Button.jsx';
 import { MOMStatusBadge } from '../common/StatusBadge.jsx';
 import { ListFieldEditor } from './ListFieldEditor.jsx';
 import { AbbreviationsEditor } from './AbbreviationsEditor.jsx';
 import { TranscriptViewer } from './TranscriptViewer.jsx';
 import { ConfirmDialog } from '../common/ConfirmDialog.jsx';
-import { Modal } from '../common/Modal.jsx';
+
 import { updateMOM, reviewMOM, finalizeMOM } from '../../services/moms.js';
-import { downloadDocx, downloadExcel, getPrintableMOM } from '../../services/exports.js';
+import { downloadPdf } from '../../services/exports.js';
 import { useToast } from '../../context/ToastContext.jsx';
 
 export function MOMEditor({
@@ -46,20 +42,31 @@ export function MOMEditor({
   const [nextSteps, setNextSteps] = useState([]);
   const [abbreviations, setAbbreviations] = useState({});
 
-  // Transition & Export loaders
+  // Transition & PDF export loader
   const [transitioning, setTransitioning] = useState(false);
-  const [exportLoading, setExportLoading] = useState(null); // 'docx' | 'excel' | 'printable'
+  const [exportLoading, setExportLoading] = useState(false);
   const [finalizeConfirmOpen, setFinalizeConfirmOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
-  const [printableHtml, setPrintableHtml] = useState(null);
 
   useEffect(() => {
     if (mom) {
       setTitle(mom.title || '');
       setSummary(mom.summary || '');
-      setDiscussionPoints(Array.isArray(mom.key_discussion_points) ? mom.key_discussion_points : []);
-      setDecisions(Array.isArray(mom.decisions) ? mom.decisions : []);
-      setNextSteps(Array.isArray(mom.next_steps) ? mom.next_steps : []);
+      setDiscussionPoints(
+        Array.isArray(mom.key_discussion_points)
+          ? mom.key_discussion_points
+          : []
+      );
+      setDecisions(
+        Array.isArray(mom.decisions)
+          ? mom.decisions
+          : []
+      );
+      setNextSteps(
+        Array.isArray(mom.next_steps)
+          ? mom.next_steps
+          : []
+      );
       setAbbreviations(mom.abbreviations_used || {});
       setIsEditing(false);
     }
@@ -67,6 +74,7 @@ export function MOMEditor({
 
   const handleSave = async () => {
     setSaving(true);
+
     try {
       await updateMOM(mom.id, {
         title: title.trim(),
@@ -76,11 +84,18 @@ export function MOMEditor({
         next_steps: nextSteps.filter(Boolean),
         abbreviations_used: abbreviations,
       });
+
       showToast('MOM updated successfully', 'success');
       setIsEditing(false);
-      if (onReload) onReload();
+
+      if (onReload) {
+        onReload();
+      }
     } catch (err) {
-      showToast(err.message || 'Failed to update MOM', 'error');
+      showToast(
+        err.message || 'Failed to update MOM',
+        'error'
+      );
     } finally {
       setSaving(false);
     }
@@ -88,12 +103,23 @@ export function MOMEditor({
 
   const handleReview = async () => {
     setTransitioning(true);
+
     try {
       await reviewMOM(mom.id);
-      showToast('MOM marked as Reviewed', 'success');
-      if (onReload) onReload();
+
+      showToast(
+        'MOM marked as Reviewed',
+        'success'
+      );
+
+      if (onReload) {
+        onReload();
+      }
     } catch (err) {
-      showToast(err.message || 'Failed to review MOM', 'error');
+      showToast(
+        err.message || 'Failed to review MOM',
+        'error'
+      );
     } finally {
       setTransitioning(false);
     }
@@ -101,53 +127,55 @@ export function MOMEditor({
 
   const handleFinalize = async () => {
     setTransitioning(true);
+
     try {
       await finalizeMOM(mom.id);
-      showToast('MOM finalized and locked', 'success');
+
+      showToast(
+        'MOM finalized and locked',
+        'success'
+      );
+
       setFinalizeConfirmOpen(false);
-      if (onReload) onReload();
+
+      if (onReload) {
+        onReload();
+      }
     } catch (err) {
-      showToast(err.message || 'Failed to finalize MOM', 'error');
+      showToast(
+        err.message || 'Failed to finalize MOM',
+        'error'
+      );
     } finally {
       setTransitioning(false);
     }
   };
 
-  const handleExportDocx = async () => {
-    setExportLoading('docx');
-    try {
-      await downloadDocx(meeting.id);
-      showToast('DOCX document downloaded', 'success');
-    } catch (err) {
-      showToast(err.message || 'Failed to export DOCX', 'error');
-    } finally {
-      setExportLoading(null);
-      setExportMenuOpen(false);
+  const handleExportPdf = async () => {
+    if (!meeting?.id) {
+      showToast(
+        'Meeting information is missing',
+        'error'
+      );
+      return;
     }
-  };
 
-  const handleExportExcel = async () => {
-    setExportLoading('excel');
-    try {
-      await downloadExcel(meeting.id);
-      showToast('Excel spreadsheet downloaded', 'success');
-    } catch (err) {
-      showToast(err.message || 'Failed to export Excel', 'error');
-    } finally {
-      setExportLoading(null);
-      setExportMenuOpen(false);
-    }
-  };
+    setExportLoading(true);
 
-  const handlePrintable = async () => {
-    setExportLoading('printable');
     try {
-      const html = await getPrintableMOM(meeting.id);
-      setPrintableHtml(html);
+      await downloadPdf(meeting.id);
+
+      showToast(
+        'PDF exported successfully',
+        'success'
+      );
     } catch (err) {
-      showToast(err.message || 'Failed to load printable view', 'error');
+      showToast(
+        err.message || 'Failed to export PDF',
+        'error'
+      );
     } finally {
-      setExportLoading(null);
+      setExportLoading(false);
       setExportMenuOpen(false);
     }
   };
@@ -155,9 +183,13 @@ export function MOMEditor({
   if (!mom) {
     return (
       <div className="rounded-xl border border-dashed border-slate-200 bg-white p-8 text-center space-y-2">
-        <p className="text-sm font-semibold text-slate-700">No Minutes of Meeting yet</p>
+        <p className="text-sm font-semibold text-slate-700">
+          No Minutes of Meeting yet
+        </p>
+
         <p className="text-xs text-slate-500 max-w-sm mx-auto">
-          Upload an audio or video recording, record through your browser, or sync from an Online Meeting to generate the structured MOM.
+          Upload an audio or video recording, record through your browser,
+          or sync from an Online Meeting to generate the structured MOM.
         </p>
       </div>
     );
@@ -170,12 +202,14 @@ export function MOMEditor({
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
             <MOMStatusBadge status={mom.status} />
+
             {isFinalized && (
               <span className="text-xs text-slate-400">
                 This document is locked against edits.
               </span>
             )}
           </div>
+
           <h2 className="text-lg font-bold text-slate-900 tracking-tight">
             {title || 'Minutes of Meeting'}
           </h2>
@@ -193,19 +227,29 @@ export function MOMEditor({
                     size="sm"
                     onClick={() => {
                       setIsEditing(false);
+
                       // Reset values
                       setTitle(mom.title || '');
                       setSummary(mom.summary || '');
-                      setDiscussionPoints(mom.key_discussion_points || []);
-                      setDecisions(mom.decisions || []);
-                      setNextSteps(mom.next_steps || []);
-                      setAbbreviations(mom.abbreviations_used || {});
+                      setDiscussionPoints(
+                        mom.key_discussion_points || []
+                      );
+                      setDecisions(
+                        mom.decisions || []
+                      );
+                      setNextSteps(
+                        mom.next_steps || []
+                      );
+                      setAbbreviations(
+                        mom.abbreviations_used || {}
+                      );
                     }}
                     disabled={saving}
                     icon={X}
                   >
                     Cancel
                   </Button>
+
                   <Button
                     size="sm"
                     onClick={handleSave}
@@ -256,54 +300,43 @@ export function MOMEditor({
             </>
           )}
 
-          {/* Export Menu */}
+          {/* PDF Export */}
           <div className="relative">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setExportMenuOpen(!exportMenuOpen)}
+              onClick={() =>
+                setExportMenuOpen(!exportMenuOpen)
+              }
               icon={Download}
               iconRight={ChevronDown}
-              loading={Boolean(exportLoading)}
+              loading={exportLoading}
             >
-              <span>{exportLoading ? `Preparing ${exportLoading}...` : 'Export'}</span>
+              <span>
+                {exportLoading
+                  ? 'Preparing PDF...'
+                  : 'Export'}
+              </span>
             </Button>
 
             {exportMenuOpen && (
               <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-lg border border-slate-200 shadow-lg py-1 z-30 animate-in fade-in zoom-in-95 duration-100">
                 <button
                   type="button"
-                  onClick={handleExportDocx}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
+                  onClick={handleExportPdf}
+                  disabled={exportLoading}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <FileText className="w-3.5 h-3.5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">Word Document</p>
-                    <p className="text-[10px] text-slate-400">Formatted .docx</p>
-                  </div>
-                </button>
+                  <Download className="w-3.5 h-3.5 text-brand-gradient" />
 
-                <button
-                  type="button"
-                  onClick={handleExportExcel}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
                   <div>
-                    <p className="font-medium">Excel Spreadsheet</p>
-                    <p className="text-[10px] text-slate-400">Structured .xlsx</p>
-                  </div>
-                </button>
+                    <p className="font-medium">
+                      PDF Document
+                    </p>
 
-                <button
-                  type="button"
-                  onClick={handlePrintable}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer border-t border-slate-100"
-                >
-                  <Printer className="w-3.5 h-3.5 text-indigo-600" />
-                  <div>
-                    <p className="font-medium">Printable / PDF</p>
-                    <p className="text-[10px] text-slate-400">A4 layout print preview</p>
+                    <p className="text-[10px] text-slate-400">
+                      Export formatted PDF
+                    </p>
                   </div>
                 </button>
               </div>
@@ -320,11 +353,12 @@ export function MOMEditor({
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
               MOM Title
             </label>
+
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-base font-bold text-slate-900 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full text-base font-bold text-slate-900 border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient"
             />
           </div>
         )}
@@ -334,17 +368,22 @@ export function MOMEditor({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
             <span>Executive Summary</span>
           </h3>
+
           {isEditing ? (
             <textarea
               rows={4}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               placeholder="Enter meeting summary..."
-              className="w-full rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-800 leading-relaxed focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-y"
+              className="w-full rounded-lg border border-slate-300 bg-white p-3 text-sm text-slate-800 leading-relaxed focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient resize-y"
             />
           ) : (
             <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line">
-              {summary || <span className="text-slate-400 italic">No summary provided.</span>}
+              {summary || (
+                <span className="text-slate-400 italic">
+                  No summary provided.
+                </span>
+              )}
             </p>
           )}
         </section>
@@ -354,6 +393,7 @@ export function MOMEditor({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Key Discussion Points
           </h3>
+
           <ListFieldEditor
             items={discussionPoints}
             onChange={setDiscussionPoints}
@@ -368,6 +408,7 @@ export function MOMEditor({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Decisions Reached
           </h3>
+
           <ListFieldEditor
             items={decisions}
             onChange={setDecisions}
@@ -382,6 +423,7 @@ export function MOMEditor({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Next Steps
           </h3>
+
           <ListFieldEditor
             items={nextSteps}
             onChange={setNextSteps}
@@ -396,6 +438,7 @@ export function MOMEditor({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Abbreviations & Definitions
           </h3>
+
           <AbbreviationsEditor
             abbreviations={abbreviations}
             onChange={setAbbreviations}
@@ -418,44 +461,6 @@ export function MOMEditor({
         variant="primary"
         loading={transitioning}
       />
-
-      {/* Printable MOM Preview Modal */}
-      <Modal
-        isOpen={Boolean(printableHtml)}
-        onClose={() => setPrintableHtml(null)}
-        title="Printable Minutes of Meeting"
-        maxWidth="max-w-4xl"
-      >
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <span className="text-xs text-slate-500">
-              Formatted document ready for printing or saving as PDF.
-            </span>
-            <Button
-              size="sm"
-              icon={Printer}
-              onClick={() => {
-                const iframe = document.getElementById('printable-mom-frame');
-                if (iframe?.contentWindow) {
-                  iframe.contentWindow.focus();
-                  iframe.contentWindow.print();
-                }
-              }}
-            >
-              Print Document
-            </Button>
-          </div>
-
-          <div className="w-full h-[65vh] border border-slate-200 rounded-lg overflow-hidden bg-white">
-            <iframe
-              id="printable-mom-frame"
-              title="Printable MOM Preview"
-              srcDoc={printableHtml || ''}
-              className="w-full h-full border-0"
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

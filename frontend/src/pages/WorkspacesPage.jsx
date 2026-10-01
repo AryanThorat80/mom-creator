@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Building2, Plus, Settings } from 'lucide-react';
 
 import { Button } from '../components/common/Button.jsx';
@@ -7,8 +7,10 @@ import { WorkspaceSettingsModal } from '../components/workspace/WorkspaceSetting
 import { WorkspaceMembers } from '../components/workspace/WorkspaceMembers.jsx';
 
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { getWorkspaceMembers } from '../services/workspaces.js';
 
-export function WorkspacesPage() {
+export function WorkspacesPage({ onNavigate }) {
   const {
     workspaces,
     currentWorkspace,
@@ -16,8 +18,55 @@ export function WorkspacesPage() {
     loading,
   } = useWorkspace();
 
+  const { user } = useAuth();
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+
+  const [isOwner, setIsOwner] = useState(false);
+  const [checkingOwner, setCheckingOwner] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkOwner = async () => {
+      if (!currentWorkspace?.id || !user?.id) {
+        setIsOwner(false);
+        setCheckingOwner(false);
+        return;
+      }
+
+      setCheckingOwner(true);
+
+      try {
+        const members = await getWorkspaceMembers(currentWorkspace.id);
+
+        const currentMembership = Array.isArray(members)
+          ? members.find((member) => member.user_id === user.id)
+          : null;
+
+        if (!cancelled) {
+          setIsOwner(currentMembership?.role === 'owner');
+        }
+      } catch (error) {
+        console.error('Failed to check workspace ownership:', error);
+
+        if (!cancelled) {
+          setIsOwner(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingOwner(false);
+        }
+      }
+    };
+
+    checkOwner();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentWorkspace?.id, user?.id]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -69,7 +118,7 @@ export function WorkspacesPage() {
               key={ws.id}
               className={`p-5 rounded-xl border transition-all ${
                 isSelected
-                  ? 'border-indigo-600 bg-white ring-1 ring-indigo-600 shadow-2xs'
+                  ? 'border-brand-gradient bg-white ring-1 ring-brand-gradient shadow-2xs'
                   : 'border-slate-200 bg-white hover:border-slate-300'
               }`}
             >
@@ -82,7 +131,7 @@ export function WorkspacesPage() {
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${
                       isSelected
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-brand-gradient text-white'
                         : 'bg-slate-100 text-slate-600'
                     }`}
                   >
@@ -113,14 +162,16 @@ export function WorkspacesPage() {
 
                 {/* Workspace actions */}
                 {isSelected ? (
-                  <button
-                    type="button"
-                    onClick={() => setSettingsModalOpen(true)}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
-                    title="Workspace settings"
-                  >
-                    <Settings className="w-4 h-4" />
-                  </button>
+                  !checkingOwner && isOwner ? (
+                    <button
+                      type="button"
+                      onClick={() => setSettingsModalOpen(true)}
+                      className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                      title="Workspace settings"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </button>
+                  ) : null
                 ) : (
                   <Button
                     variant="secondary"
@@ -143,36 +194,33 @@ export function WorkspacesPage() {
           CURRENT WORKSPACE MEMBERS
           ===================================================== */}
 
-      {currentWorkspace && (
+      {currentWorkspace && isOwner && (
         <>
           <WorkspaceMembers />
 
           <button
             type="button"
-            onClick={() => {
-              window.history.pushState({}, '', '/members');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-            }}
-            className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+            onClick={() => onNavigate?.('/members')}
+            className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-brand-gradient text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
           >
             Manage Members
           </button>
         </>
       )}
 
-      
-
-
       {/* Modals */}
+
       <CreateWorkspaceModal
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
       />
 
-      <WorkspaceSettingsModal
-        isOpen={settingsModalOpen}
-        onClose={() => setSettingsModalOpen(false)}
-      />
+      {isOwner && (
+        <WorkspaceSettingsModal
+          isOpen={settingsModalOpen}
+          onClose={() => setSettingsModalOpen(false)}
+        />
+      )}
 
     </div>
   );

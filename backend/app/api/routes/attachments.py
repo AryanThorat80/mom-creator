@@ -19,11 +19,13 @@ ALLOWED_BUCKETS = {
     "meeting-files",
     "meeting-audio",
     "meeting-video",
+    "workspace-mom-template",
 }
 
 
 class UploadConfirmRequest(BaseModel):
-    meeting_id: str
+    meeting_id: str | None = None
+    workspace_id: str | None = None
     bucket: str
     path: str
     file_name: str
@@ -75,6 +77,7 @@ async def confirm_upload(
     if payload.attachment_type not in {
         "meeting_attachment",
         "imported_mom",
+        "workspace_mom_template",
     }:
         raise HTTPException(
             status_code=400,

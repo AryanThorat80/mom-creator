@@ -28,7 +28,7 @@ export const Textarea = forwardRef(function Textarea(
         id={inputId}
         rows={rows}
         required={required}
-        className={`w-full rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-colors disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-y ${
+        className={`w-full rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient transition-colors disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed resize-y ${
           error ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-500/20' : 'border-slate-300'
         } ${className}`}
         {...props}

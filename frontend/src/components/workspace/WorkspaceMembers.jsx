@@ -165,7 +165,7 @@ export function WorkspaceMembers() {
 
           <div className="flex items-start gap-3 mb-4">
 
-            <div className="w-9 h-9 rounded-lg bg-white border border-indigo-100 text-indigo-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-white border border-indigo-100 text-brand-gradient flex items-center justify-center">
               <Mail className="w-4 h-4" />
             </div>
 
@@ -271,7 +271,7 @@ export function WorkspaceMembers() {
         {loading ? (
           <div className="flex items-center justify-center py-12">
 
-            <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
+            <Loader2 className="w-5 h-5 text-brand-gradient animate-spin" />
 
             <span className="ml-2 text-xs text-slate-500">
               Loading members...

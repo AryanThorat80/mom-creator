@@ -176,7 +176,7 @@ export function ActionItemModal({
             <select
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient"
             >
               <option value="">None (Unlinked)</option>
               {members.map((m) => (

@@ -421,19 +421,101 @@ async def create_workspace_invitation(
         )
 
     # --------------------------------------------------------
-    # 8. Build frontend acceptance URL
+    # 8. Load workspace name
+    # --------------------------------------------------------
+
+    try:
+        workspace_response = (
+            admin_supabase
+            .table("workspaces")
+            .select("name")
+            .eq("id", workspace_id)
+            .single()
+            .execute()
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Invitation created but workspace could not be loaded: "
+                f"{exc}"
+            ),
+        )
+
+    if not workspace_response.data:
+        raise HTTPException(
+            status_code=500,
+            detail="Invitation created but workspace could not be found",
+        )
+
+    workspace_name = workspace_response.data["name"]
+
+    # --------------------------------------------------------
+    # 9. Build frontend acceptance URL
     # --------------------------------------------------------
 
     invitation_url = (
         f"http://localhost:5173/invitations/{raw_token}"
     )
 
+    # --------------------------------------------------------
+    # 10. Send invitation email through Supabase Edge Function
+    # --------------------------------------------------------
+
+    try:
+        function_response = admin_supabase.functions.invoke(
+            "send-workspace-invitation",
+            {
+                "body": {
+                    "email": email,
+                    "workspaceName": workspace_name,
+                    "invitationUrl": invitation_url,
+                }
+            },
+        )
+
+        function_error = getattr(
+            function_response,
+            "error",
+            None,
+        )
+
+        if function_error:
+            raise RuntimeError(str(function_error))
+
+    except Exception as exc:
+        try:
+            admin_supabase.table(
+                "workspace_invitations"
+            ).update(
+                {
+                    "status": "revoked",
+                }
+            ).eq(
+                "id",
+                response.data[0]["id"],
+            ).execute()
+        except Exception:
+            pass
+
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                "Invitation was created but the email could not be sent: "
+                f"{exc}"
+            ),
+        )
+
+    # --------------------------------------------------------
+    # 11. Return created invitation
+    # --------------------------------------------------------
+
     return {
-        "id": response.data["id"],
-        "workspace_id": response.data["workspace_id"],
-        "email": response.data["email"],
-        "status": response.data["status"],
-        "expires_at": response.data["expires_at"],
+        "id": response.data[0]["id"],
+        "workspace_id": response.data[0]["workspace_id"],
+        "email": response.data[0]["email"],
+        "status": response.data[0]["status"],
+        "expires_at": response.data[0]["expires_at"],
         "invitation_url": invitation_url,
     }
 
@@ -579,7 +661,7 @@ async def accept_workspace_invitation(
         .execute()
     )
 
-    if existing_membership.data:
+    if existing_membership and existing_membership.data:
         # Mark invitation accepted even though membership already exists
         admin_supabase.table(
             "workspace_invitations"
@@ -604,24 +686,33 @@ async def accept_workspace_invitation(
         }
 
     # --------------------------------------------------------
-    # 8. Add user as member
+    # 8. Add user to workspace
     # --------------------------------------------------------
 
     try:
-        admin_supabase.table(
-            "workspace_members"
-        ).insert(
-            {
-                "workspace_id": invitation["workspace_id"],
-                "user_id": user.id,
-                "role": "member",
-            }
-        ).execute()
-
+        member_response = (
+            admin_supabase
+            .table("workspace_members")
+            .insert(
+                {
+                    "workspace_id": invitation["workspace_id"],
+                    "user_id": user.id,
+                    "role": "member",
+                }
+            )
+            .select("user_id, role")
+            .execute()
+        )
     except Exception as exc:
         raise HTTPException(
-            status_code=400,
-            detail=f"Failed to add workspace member: {exc}",
+            status_code=500,
+            detail=f"Failed to add member to workspace: {exc}",
+        )
+
+    if not member_response.data:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to add member to workspace",
         )
 
     # --------------------------------------------------------

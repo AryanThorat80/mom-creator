@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Plus, ArrowRight, Video, Calendar, CheckCircle2, Clock, AlertCircle, Sparkles } from 'lucide-react';
+import { Plus, ArrowRight, Video, Calendar, CheckCircle2, Clock, AlertCircle, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '../components/common/Button.jsx';
 import { MeetingCard } from '../components/meeting/MeetingCard.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import { listMeetings, deleteMeeting } from '../services/meetings.js';
+import { getFirefliesStatus, refreshFireflies } from '../services/fireflies.js';
 import { getGoogleCalendarStatus } from '../services/googleCalendar.js';
 import { ConfirmDialog } from '../components/common/ConfirmDialog.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -16,12 +17,18 @@ export function DashboardPage({
   const { user, profile } = useAuth();
   const { currentWorkspace } = useWorkspace();
   const { showToast } = useToast();
+  const [firefliesStatus, setFirefliesStatus] =
+    useState(null);
 
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [firefliesConnected, setFirefliesConnected] = useState(false);
+  const [firefliesNextRefreshAt, setFirefliesNextRefreshAt] = useState(null);
+  const [refreshingFireflies, setRefreshingFireflies] = useState(false);
+  const [firefliesCountdown, setFirefliesCountdown] = useState('');
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -36,9 +43,10 @@ export function DashboardPage({
     if (!currentWorkspace?.id) return;
     setLoading(true);
     try {
-      const [meetingsData, calStatus] = await Promise.allSettled([
+      const [meetingsData, calStatus, firefliesStatus] = await Promise.allSettled([
         listMeetings(currentWorkspace.id),
         getGoogleCalendarStatus(),
+        getFirefliesStatus(currentWorkspace.id),
       ]);
 
       if (meetingsData.status === 'fulfilled' && Array.isArray(meetingsData.value)) {
@@ -50,6 +58,14 @@ export function DashboardPage({
       if (calStatus.status === 'fulfilled' && calStatus.value?.connected) {
         setGoogleCalendarConnected(Boolean(calStatus.value.calendar_scope_granted));
       }
+
+      if (firefliesStatus.status === 'fulfilled') {
+        setFirefliesConnected(Boolean(firefliesStatus.value?.connected));
+        setFirefliesNextRefreshAt(firefliesStatus.value?.next_refresh_at || null);
+      } else {
+        setFirefliesConnected(false);
+        setFirefliesNextRefreshAt(null);
+      }
     } catch (err) {
       console.warn('Dashboard data loading:', err);
     } finally {
@@ -60,6 +76,52 @@ export function DashboardPage({
   useEffect(() => {
     loadData();
   }, [currentWorkspace?.id]);
+
+  useEffect(() => {
+    if (!firefliesNextRefreshAt) {
+      setFirefliesCountdown('');
+      return;
+    }
+
+    const updateCountdown = () => {
+      const remaining = Math.max(0, new Date(firefliesNextRefreshAt).getTime() - Date.now());
+      if (remaining <= 0) {
+        setFirefliesCountdown('');
+        return;
+      }
+      const totalMinutes = Math.ceil(remaining / 60000);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      setFirefliesCountdown(hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`);
+    };
+
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 30000);
+    return () => window.clearInterval(timer);
+  }, [firefliesNextRefreshAt]);
+
+  const handleRefreshFireflies = async () => {
+    if (!currentWorkspace?.id || refreshingFireflies || firefliesCountdown) return;
+    setRefreshingFireflies(true);
+    try {
+      const result = await refreshFireflies(currentWorkspace.id);
+      setFirefliesNextRefreshAt(result?.next_refresh_at || null);
+      showToast(
+        result?.imported
+          ? `Imported ${result.imported} Fireflies meeting${result.imported === 1 ? '' : 's'}.`
+          : 'Fireflies checked. No new meetings found.',
+        'success'
+      );
+      await loadData();
+    } catch (err) {
+      if (err?.status === 429 && err?.data?.detail?.next_refresh_at) {
+        setFirefliesNextRefreshAt(err.data.detail.next_refresh_at);
+      }
+      showToast(err.message || 'Failed to refresh Fireflies meetings', 'error');
+    } finally {
+      setRefreshingFireflies(false);
+    }
+  };
 
   const handleDeleteMeeting = async () => {
     if (!deleteTarget) return;
@@ -92,12 +154,27 @@ export function DashboardPage({
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
-            onClick={onOpenCreateMeeting}
-            icon={Plus}
-          >
-            New Meeting
-          </Button>
+          <div className="flex items-center gap-2">
+            {firefliesStatus?.connected && (
+              <Button
+                variant="secondary"
+                onClick={handleRefreshFireflies}
+                loading={refreshingFireflies}
+                disabled={
+                  !firefliesStatus.sync_available ||
+                  refreshingFireflies
+                }
+                icon={RefreshCw}
+              >
+                {firefliesStatus.sync_available
+                  ? 'Refresh Fireflies'
+                  : 'Fireflies synced'}
+              </Button>
+            )}
+            <Button onClick={onOpenCreateMeeting} icon={Plus}>
+              New Meeting
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -105,7 +182,7 @@ export function DashboardPage({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-brand-gradient flex items-center justify-center shrink-0">
               <Video className="w-4 h-4" />
             </div>
             <div>
@@ -116,7 +193,7 @@ export function DashboardPage({
           <button
             type="button"
             onClick={() => onNavigate('/integrations')}
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer"
+            className="text-xs font-semibold text-brand-gradient hover:text-indigo-700 cursor-pointer"
           >
             Configure →
           </button>
@@ -144,7 +221,7 @@ export function DashboardPage({
           <button
             type="button"
             onClick={() => onNavigate('/integrations')}
-            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer"
+            className="text-xs font-semibold text-brand-gradient hover:text-indigo-700 cursor-pointer"
           >
             {googleCalendarConnected ? 'Manage →' : 'Connect →'}
           </button>
@@ -164,7 +241,7 @@ export function DashboardPage({
             <button
               type="button"
               onClick={() => onNavigate('/meetings')}
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-brand-gradient hover:text-indigo-700 flex items-center gap-1 cursor-pointer"
             >
               <span>View all ({meetings.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -215,4 +292,56 @@ export function DashboardPage({
       />
     </div>
   );
+}
+
+export function MeetingModeBadge({ mode }) {
+  switch (mode) {
+
+    case 'fireflies':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <Flame className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+          <span>Fireflies</span>
+        </span>
+      );
+
+    case 'google_meet':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <Video className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+          <span>Online Meeting · Google Meet</span>
+        </span>
+      );
+
+    case 'mic_recording':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <Mic className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <span>Microphone</span>
+        </span>
+      );
+
+    case 'upload':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <UploadCloud className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          <span>Uploaded Recording</span>
+        </span>
+      );
+
+    case 'import':
+      return (
+        <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+          <FileSpreadsheet className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+          <span>Import</span>
+        </span>
+      );
+
+    default:
+      return (
+        <span className="text-xs text-slate-500 capitalize">
+          {mode}
+        </span>
+      );
+  }
 }

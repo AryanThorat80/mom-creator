@@ -31,7 +31,7 @@ export function LoginPage({ onNavigateToRegister }) {
       <div className="w-full max-w-md space-y-6">
         {/* Brand header */}
         <div className="text-center space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold text-lg flex items-center justify-center mx-auto shadow-xs">
+          <div className="w-10 h-10 rounded-xl bg-brand-gradient text-white font-bold text-lg flex items-center justify-center mx-auto shadow-xs">
             M
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -99,7 +99,7 @@ export function LoginPage({ onNavigateToRegister }) {
             <button
               type="button"
               onClick={onNavigateToRegister}
-              className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer"
+              className="text-brand-gradient font-semibold hover:text-indigo-700 cursor-pointer"
             >
               Create Account
             </button>

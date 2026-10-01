@@ -62,7 +62,7 @@ export function WorkspaceOnboardingPage({ onComplete }) {
       <div className="w-full max-w-lg">
         {/* Logo / Brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-11 h-11 rounded-xl bg-indigo-600 text-white font-bold text-lg flex items-center justify-center shadow-sm mb-4">
+          <div className="w-11 h-11 rounded-xl bg-brand-gradient text-white font-bold text-lg flex items-center justify-center shadow-sm mb-4">
             M
           </div>
 
@@ -80,7 +80,7 @@ export function WorkspaceOnboardingPage({ onComplete }) {
         {/* Card */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
           <div className="flex items-start gap-4 mb-7">
-            <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 text-brand-gradient flex items-center justify-center">
               <Building2 className="w-5 h-5" />
             </div>
 

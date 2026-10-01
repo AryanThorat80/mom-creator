@@ -128,7 +128,7 @@ export function BrowserRecorder({ onRecordingComplete, disabled = false }) {
 
       {recordingState === 'idle' && (
         <div className="flex flex-col items-center justify-center py-6 text-center">
-          <div className="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+          <div className="w-14 h-14 rounded-full bg-indigo-50 text-brand-gradient flex items-center justify-center mb-3">
             <Mic className="w-6 h-6" />
           </div>
           <h4 className="text-sm font-semibold text-slate-900">Microphone Ready</h4>

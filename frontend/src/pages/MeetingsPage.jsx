@@ -18,7 +18,7 @@ export function MeetingsPage({
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterMode, setFilterMode] = useState('all'); // all | upload | mic_recording | google_meet | zoom | import
+  const [filterMode, setFilterMode] = useState('all'); // all | upload | mic_recording | google_meet | import | fireflies
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -106,7 +106,7 @@ export function MeetingsPage({
             placeholder="Search meetings by title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-colors"
+            className="w-full pl-9 pr-3.5 py-2 text-xs rounded-lg border border-slate-300 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient transition-colors"
           />
         </div>
 
@@ -117,8 +117,8 @@ export function MeetingsPage({
             { id: 'upload', label: 'Uploads' },
             { id: 'mic_recording', label: 'Mic' },
             { id: 'google_meet', label: 'Online / Google Meet' },
-            { id: 'zoom', label: 'Online / Zoom' },
             { id: 'import', label: 'Imports' },
+            { id: 'fireflies', label: 'Fireflies' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -186,7 +186,7 @@ export function MeetingsPage({
                     className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
                   >
                     <td className="py-3.5 px-5">
-                      <div className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                      <div className="font-semibold text-slate-900 group-hover:text-brand-gradient transition-colors">
                         {m.title}
                       </div>
                       {m.description && (
@@ -205,7 +205,7 @@ export function MeetingsPage({
                       <MeetingStatusBadge status={m.status} />
                     </td>
                     <td className="py-3.5 px-5 text-right">
-                      <span className="text-indigo-600 font-medium inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      <span className="text-brand-gradient font-medium inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                         Open <ArrowRight className="w-3.5 h-3.5" />
                       </span>
                     </td>

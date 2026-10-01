@@ -13,6 +13,7 @@ import {
   Clock,
   Sparkles,
   RefreshCw,
+  FileDown,
 } from 'lucide-react';
 import { Button } from '../components/common/Button.jsx';
 import { Input } from '../components/common/Input.jsx';
@@ -23,18 +24,21 @@ import { MeetingStatusBadge, MeetingModeBadge } from '../components/common/Statu
 import { BrowserRecorder } from '../components/meeting/BrowserRecorder.jsx';
 import { UploadRecording } from '../components/meeting/UploadRecording.jsx';
 import { GoogleMeetCard } from '../components/integrations/GoogleMeetCard.jsx';
-import { ZoomCard } from '../components/integrations/ZoomCard.jsx';
 import { ProcessingProgress } from '../components/meeting/ProcessingProgress.jsx';
 import { AttachmentsList } from '../components/meeting/AttachmentsList.jsx';
 import { MOMEditor } from '../components/mom/MOMEditor.jsx';
 import { ActionItemsTable } from '../components/actionItems/ActionItemsTable.jsx';
+import { MeetingParticipants } from '../components/mom/MeetingParticipants.jsx';
 import { getMeeting, updateMeeting, deleteMeeting } from '../services/meetings.js';
 import { uploadToStorage, confirmAttachmentUpload } from '../services/attachments.js';
 import { createProcessingJob, runProcessingJob, pollProcessingJob } from '../services/processing.js';
 import { getMOM, getMOMByMeeting } from '../services/moms.js';
 import { listActionItems } from '../services/actionItems.js';
+import { listMeetingParticipants } from '../services/meetingParticipants.js';
 import { useToast } from '../context/ToastContext.jsx';
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { exportMOMPdf } from '../services/exports.js';
 
 export function MeetingDetailPage({
   meetingId,
@@ -42,11 +46,13 @@ export function MeetingDetailPage({
   onNavigate,
 }) {
   const { currentWorkspace } = useWorkspace();
+  const { user } = useAuth();
   const { showToast } = useToast();
 
   const [meeting, setMeeting] = useState(null);
   const [mom, setMom] = useState(null);
   const [actionItems, setActionItems] = useState([]);
+  const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Edit Meeting Details Modal
@@ -77,6 +83,14 @@ export function MeetingDetailPage({
         setActionItems(Array.isArray(actionsData) ? actionsData : []);
       } catch {
         setActionItems([]);
+      }
+
+      // Load manually entered meeting participants
+      try {
+        const participantsData = await listMeetingParticipants(meetingId);
+        setParticipants(Array.isArray(participantsData) ? participantsData : []);
+      } catch {
+        setParticipants([]);
       }
 
       // Load MOM for this meeting
@@ -243,6 +257,15 @@ export function MeetingDetailPage({
     }
   };
 
+  const handleExportPdf = async () => {
+    try {
+      await exportMOMPdf(meeting.id);
+      showToast('MOM PDF exported successfully', 'success');
+    } catch (err) {
+      showToast(err.message || 'Failed to export MOM PDF', 'error');
+    }
+  };
+
   const handleDeleteMeeting = async () => {
     setDeleting(true);
     try {
@@ -402,11 +425,6 @@ export function MeetingDetailPage({
                 />
               )}
 
-
-              {meeting.mode === 'zoom' && (
-                <ZoomCard meetingId={meeting.id} />
-              )}
-
               {meeting.mode === 'import' && (
                 <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-3 text-center">
                   <p className="text-xs font-semibold text-slate-800">Direct MOM Generation</p>
@@ -439,6 +457,14 @@ export function MeetingDetailPage({
           )}
         </div>
       )}
+
+      {/* Participants */}
+      <MeetingParticipants
+        meetingId={meeting.id}
+        participants={participants}
+        canEdit={String(meeting.created_by) === String(user?.id)}
+        onReload={loadAllData}
+      />
 
       {/* Main Minutes of Meeting Document */}
       <div className="space-y-4">

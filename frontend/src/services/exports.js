@@ -1,50 +1,53 @@
 import { apiRequest } from '../lib/api.js';
 
-export async function downloadDocx(meetingId) {
-  const result = await apiRequest(`/api/v1/meetings/${meetingId}/export/docx`, {
-    method: 'GET',
-    responseType: 'blob',
-  });
+/**
+ * Export a meeting MOM as PDF.
+ *
+ * Backend endpoint:
+ * GET /api/v1/meetings/{meetingId}/export/pdf
+ */
+export async function exportMOMPdf(meetingId) {
+  if (!meetingId) {
+    throw new Error('Meeting ID is required');
+  }
 
-  const blob = result.blob;
-  const filename = result.filename || `meeting_${meetingId}_mom.docx`;
+  const result = await apiRequest(
+    `/api/v1/meetings/${meetingId}/export/pdf`,
+    {
+      method: 'GET',
+      responseType: 'blob',
+    }
+  );
 
-  const blobUrl = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(blobUrl);
+  if (!result?.blob) {
+    throw new Error('PDF export returned no file');
+  }
 
-  return { success: true, filename };
+  const blobUrl = window.URL.createObjectURL(result.blob);
+
+  try {
+    const link = document.createElement('a');
+
+    link.href = blobUrl;
+
+    link.download =
+      result.filename ||
+      `MOM-${meetingId}.pdf`;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } finally {
+    window.URL.revokeObjectURL(blobUrl);
+  }
+
+  return result;
 }
 
-export async function downloadExcel(meetingId) {
-  const result = await apiRequest(`/api/v1/meetings/${meetingId}/export/excel`, {
-    method: 'GET',
-    responseType: 'blob',
-  });
-
-  const blob = result.blob;
-  const filename = result.filename || `meeting_${meetingId}_mom.xlsx`;
-
-  const blobUrl = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(blobUrl);
-
-  return { success: true, filename };
-}
-
-export async function getPrintableMOM(meetingId) {
-  return await apiRequest(`/api/v1/meetings/${meetingId}/export/printable`, {
-    method: 'GET',
-    responseType: 'text',
-  });
+/*
+ * Keep downloadPdf as an alias so MOMEditor.jsx
+ * and any other existing component can use either name.
+ */
+export async function downloadPdf(meetingId) {
+  return await exportMOMPdf(meetingId);
 }

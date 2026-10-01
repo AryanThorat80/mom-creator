@@ -55,7 +55,7 @@ export function AbbreviationsEditor({
             placeholder="Abbr (e.g. ROI)"
             value={abbr}
             onChange={(e) => handleUpdate(abbr, e.target.value, full)}
-            className="w-28 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+            className="w-28 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient"
           />
           <span className="text-slate-400">:</span>
           <input
@@ -63,7 +63,7 @@ export function AbbreviationsEditor({
             placeholder="Definition (e.g. Return on Investment)"
             value={full}
             onChange={(e) => handleUpdate(abbr, abbr, e.target.value)}
-            className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+            className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient"
           />
           <button
             type="button"
@@ -81,7 +81,7 @@ export function AbbreviationsEditor({
         size="sm"
         onClick={handleAdd}
         icon={Plus}
-        className="text-xs text-indigo-600 hover:text-indigo-700"
+        className="text-xs text-brand-gradient hover:text-indigo-700"
       >
         Add Abbreviation
       </Button>

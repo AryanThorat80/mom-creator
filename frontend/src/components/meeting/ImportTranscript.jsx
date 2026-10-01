@@ -192,7 +192,7 @@ export function ImportTranscript({
               disabled={disabled || loading}
               className="w-full flex flex-col items-center justify-center p-7 rounded-lg border-2 border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 bg-slate-50/50 cursor-pointer text-center transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2">
+              <div className="w-11 h-11 rounded-xl bg-indigo-50 text-brand-gradient flex items-center justify-center mb-2">
                 <Upload className="w-5 h-5" />
               </div>
 
@@ -212,7 +212,7 @@ export function ImportTranscript({
             <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-indigo-200 bg-indigo-50/40">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0">
-                  <FileCode className="w-4 h-4 text-indigo-600" />
+                  <FileCode className="w-4 h-4 text-brand-gradient" />
                 </div>
 
                 <div className="min-w-0">
@@ -257,7 +257,7 @@ export function ImportTranscript({
               }
             }}
             disabled={disabled || loading}
-            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 font-mono resize-y"
+            className="w-full rounded-lg border border-slate-300 bg-white p-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-brand-gradient font-mono resize-y"
           />
 
           <p className="text-[10px] text-slate-400">

@@ -44,19 +44,6 @@ export function Header({
           ))}
         </nav>
       </div>
-
-      {/* Zone 2: Fast Action */}
-      <div className="flex items-center gap-2.5 shrink-0">
-        {onOpenCreateMeeting && (
-          <Button
-            size="sm"
-            onClick={onOpenCreateMeeting}
-            icon={Plus}
-          >
-            <span>New Meeting</span>
-          </Button>
-        )}
-      </div>
     </header>
   );
 }
