@@ -53,7 +53,7 @@ export function ToastProvider({ children }) {
               className={`pointer-events-auto flex items-start gap-3 p-3.5 rounded-lg border text-sm transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 ${borderClass}`}
             >
               <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${iconClass}`} />
-              <div className="flex-1 font-medium leading-relaxed break-words">{toast.message}</div>
+              <div className="flex-1 font-medium leading-relaxed wrap-break-word">{toast.message}</div>
               <button
                 type="button"
                 onClick={() => removeToast(toast.id)}

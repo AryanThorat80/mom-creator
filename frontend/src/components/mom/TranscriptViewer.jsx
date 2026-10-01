@@ -64,7 +64,7 @@ export function TranscriptViewer({ transcript = '' }) {
         </div>
       </div>
 
-      <div className="p-5 font-mono text-xs text-slate-700 bg-slate-50/50 space-y-2.5 max-h-[500px] overflow-y-auto leading-relaxed selection:bg-indigo-100">
+      <div className="p-5 font-mono text-xs text-slate-700 bg-slate-50/50 space-y-2.5 max-h-125 overflow-y-auto leading-relaxed selection:bg-indigo-100">
         {displayedLines.map((line, idx) => {
           // Check if line looks like "Speaker: ..." or "Timestamp Speaker: ..."
           const match = line.match(/^(\[?[\d:]+\]?\s+)?([A-Za-z0-9\s._-]+):(.*)$/);

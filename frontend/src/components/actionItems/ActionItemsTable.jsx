@@ -152,7 +152,7 @@ export function ActionItemsTable({
               <thead className="bg-slate-50/75 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-2.5 px-4 w-10">Done</th>
-                  <th className="py-2.5 px-4 min-w-[200px]">Task</th>
+                  <th className="py-2.5 px-4 min-w-50">Task</th>
                   <th className="py-2.5 px-4">Assignee</th>
                   <th className="py-2.5 px-4">Due Date</th>
                   <th className="py-2.5 px-4">Priority</th>
